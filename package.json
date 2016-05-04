@@ -8,15 +8,15 @@
     "a2apigen": "./bin/a2apigen.js"
   },
   "author": {
-    "name": "Navid Nikpour",
-    "email": "navid@nikpour.com"
+    "name": "Egor Genning",
+    "email": "genning_ep@bw-sw.com"
   },
   "bugs": {
     "url": "https://github.com/nvdnkpr/angular2-swagger-client-generator/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nvdnkpr/angular2-swagger-client-generator.git"
+    "url": "git://github.com/pm-Egor-Genning/angular2-swagger-client-generator.git"
   },
   "keywords": [
     "swagger",
