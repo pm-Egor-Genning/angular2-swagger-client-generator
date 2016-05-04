@@ -1,6 +1,6 @@
 /* tslint:disable */
 import { Injectable } from 'angular2/core';
-import { Http, Response, Headers, URLSearchParams } from 'angular2/http';
+import { Http, Response, Headers, URLSearchParams, RequestOptionsArgs } from 'angular2/http';
 import { {{#definitions}}{{name}}{{^last}}, {{/last}}{{/definitions}} } from './models';
 import 'rxjs/Rx';
 
@@ -102,9 +102,9 @@ throw new Error('Domain parameter must be specified as a string.');
         {{/isFormParameter}}
     {{/parameters}}
     let uri = `{{#swagger.basePath}}{{&.}}{{/swagger.basePath}}{{&path}}`;
-
+    let params:RequestOptionsArgs = { headers: headers, search: queryParameters }; 
     return this.http
-    .{{angular2httpMethod}}(this.domain + uri{{#hasPayload}}, JSON.stringify({{#parameters}}{{#isBodyParameter}}{{&camelCaseName}}{{/isBodyParameter}}{{/parameters}}){{/hasPayload}}, { headers: headers, search: queryParameters })
+    .{{angular2httpMethod}}(this.domain + uri{{#hasPayload}}, JSON.stringify({{#parameters}}{{#isBodyParameter}}{{&camelCaseName}}{{/isBodyParameter}}{{/parameters}}){{/hasPayload}}, params)
     .map((res: Response) => {
     {{#hasJsonResponse}}
         let result = res.json();
