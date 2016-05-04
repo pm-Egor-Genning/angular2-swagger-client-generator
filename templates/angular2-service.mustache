@@ -1,6 +1,6 @@
 /* tslint:disable */
 import { Injectable } from 'angular2/core';
-import { Http, Response, Headers } from 'angular2/http';
+import { Http, Response, Headers, URLSearchParams } from 'angular2/http';
 import { {{#definitions}}{{name}}{{^last}}, {{/last}}{{/definitions}} } from './models';
 import 'rxjs/Rx';
 
@@ -51,27 +51,27 @@ export class ApiClientService {
 	*/
 	public {{&methodName}}({{#parameters}}{{&camelCaseName}}: {{typescriptType}}{{^last}}, {{/last}}{{/parameters}}) {
 		let payload = {};	
-		let queryParameters = {};
+		var queryParameters = new URLSearchParams();
 		let headers = new Headers();
 		headers.append('Content-Type', 'application/json');
 		
 {{#parameters}}
 			{{#isQueryParameter}}
 			  {{#isSingleton}}
-		queryParameters['{{&name}}'] = '{{&singleton}}';
+		queryParameters.append('{{&name}}',{{&singleton}});
         {{/isSingleton}}
       
 			  {{^isSingleton}}
 			    {{#isPatternType}}
 		Object.keys(parameters).forEach(function(parameterName) {
 			if(new RegExp('{{&pattern}}').test(parameterName)){
-				queryParameters[parameterName] = parameters[parameterName];
+				queryParameters.append(parameterName,parameters[parameterName]);
 			}
 		});
           {{/isPatternType}}
 			    {{^isPatternType}}
 		if(parameters['{{&camelCaseName}}'] !== undefined){
-			queryParameters['{{&name}}'] = parameters['{{&camelCaseName}}'];
+			queryParameters.append('{{&name}}',parameters['{{&camelCaseName}}']);
 		}
           {{/isPatternType}}
         {{/isSingleton}}
@@ -104,7 +104,7 @@ export class ApiClientService {
 		let uri = `{{#swagger.basePath}}{{&.}}{{/swagger.basePath}}{{&path}}`;
 	  
 		return this.http
-			.{{angular2httpMethod}}(this.domain + uri{{#hasPayload}}, JSON.stringify({{#parameters}}{{#isBodyParameter}}{{&camelCaseName}}{{/isBodyParameter}}{{/parameters}}){{/hasPayload}}, { headers: headers, params: queryParameters })
+			.{{angular2httpMethod}}(this.domain + uri{{#hasPayload}}, JSON.stringify({{#parameters}}{{#isBodyParameter}}{{&camelCaseName}}{{/isBodyParameter}}{{/parameters}}){{/hasPayload}}, { headers: headers, search: queryParameters })
 			.map((res: Response) => {
 			   {{#hasJsonResponse}}
          let result = res.json();
