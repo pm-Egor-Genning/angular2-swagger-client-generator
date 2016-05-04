@@ -70,7 +70,7 @@ var Generator = (function () {
 
         if (!fs.existsSync(outputdir))
             fs.mkdirSync(outputdir);
-			
+
         // generate API models				
         _.forEach(this.viewModel.definitions, function (definition, defName) {
             that.LogMessage('Rendering template for model: ', definition.name);
@@ -117,7 +117,7 @@ var Generator = (function () {
         // Beautify *****
         // NOTE: this has been commented because of curly braces were added on newline after beaufity
         //result = beautify(result, { indent_size: 4, max_preserve_newlines: 2 });
-        
+
         return result;
     }
 
@@ -149,15 +149,14 @@ var Generator = (function () {
             });
 
             _.forEach(api, function (op, m) {
-                if (authorizedMethods.indexOf(m.toUpperCase()) === -1){
+                if (authorizedMethods.indexOf(m.toUpperCase()) === -1) {
                     return;
                 }
-                
+
                 var summaryLines = op.description.split('\n');
-                summaryLines.splice(summaryLines.length-1, 1);
-                
-                
-                
+                summaryLines.splice(summaryLines.length - 1, 1);
+
+
                 var method = {
                     path: path,
                     className: CLASS_NAME,
@@ -165,7 +164,7 @@ var Generator = (function () {
                     method: m.toUpperCase(),
                     angular2httpMethod: m.toLowerCase(),
                     isGET: m.toUpperCase() === 'GET',
-                    hasPayload: !_.includes(['GET','DELETE','HEAD'], m.toUpperCase()), 
+                    hasPayload: !_.includes(['GET', 'DELETE', 'HEAD'], m.toUpperCase()),
                     summaryLines: summaryLines,
                     isSecure: swagger.security !== undefined || op.security !== undefined,
                     parameters: [],
@@ -184,7 +183,7 @@ var Generator = (function () {
                 _.forEach(params, function (parameter) {
                     // Ignore headers which are injected by proxies & app servers
                     // eg: https://cloud.google.com/appengine/docs/go/requests#Go_Request_headers
-					
+
                     if (parameter['x-proxy-header'] && !data.isNode)
                         return;
 
@@ -220,12 +219,22 @@ var Generator = (function () {
 
                     else if (parameter.in === 'formData')
                         parameter.isFormParameter = true;
-
+                    
                     method.parameters.push(parameter);
                 });
-
-                if (method.parameters.length > 0)
+                
+                if (method.parameters.length > 0) {
                     method.parameters[method.parameters.length - 1].last = true;
+                    method.noParameters = false;
+                    method.parameters.noBodyParameters = true;
+                    _.forEach(method.parameters, function (parameter) {
+                        if (parameter.isBodyParameter) {
+                            parameter.noBodyParameters = false;
+                        }
+                    });
+                } else {
+                    method.noParameters = true;
+                }
 
                 data.methods.push(method);
             });

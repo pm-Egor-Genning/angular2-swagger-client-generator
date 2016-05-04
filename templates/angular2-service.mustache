@@ -70,8 +70,8 @@ throw new Error('Domain parameter must be specified as a string.');
                     });
                 {{/isPatternType}}
                 {{^isPatternType}}
-                    if(parameters['{{&camelCaseName}}'] !== undefined){
-                    queryParameters.append('{{&name}}',parameters['{{&camelCaseName}}']);
+                    if('{{&camelCaseName}}' !== undefined){
+                    queryParameters.append('{{&name}}','{{&camelCaseName}}');
                     }
                 {{/isPatternType}}
             {{/isSingleton}}
@@ -102,9 +102,9 @@ throw new Error('Domain parameter must be specified as a string.');
         {{/isFormParameter}}
     {{/parameters}}
     let uri = `{{#swagger.basePath}}{{&.}}{{/swagger.basePath}}{{&path}}`;
-    let params:RequestOptionsArgs = { headers: headers, search: queryParameters }; 
+    let options:RequestOptionsArgs = { headers: headers, search: queryParameters };
     return this.http
-    .{{angular2httpMethod}}(this.domain + uri{{#hasPayload}}, JSON.stringify({{#parameters}}{{#isBodyParameter}}{{&camelCaseName}}{{/isBodyParameter}}{{/parameters}}){{/hasPayload}}, params)
+    .{{angular2httpMethod}}(this.domain + uri{{#hasPayload}}, JSON.stringify({{#noBodyParameters}}{}{{/noBodyParameters}}{{#noParameters}}{}{{/noParameters}}{{#parameters}}{{#isBodyParameter}}{{&camelCaseName}}{{/isBodyParameter}}{{/parameters}}){{/hasPayload}}, options)
     .map((res: Response) => {
     {{#hasJsonResponse}}
         let result = res.json();
